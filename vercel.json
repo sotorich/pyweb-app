@@ -10,5 +10,9 @@
             "src": "/(.*)",
             "dest": "api/main.py"
         }
+    ],
+    "files": [
+        "datas.json",
+        "datas_filter.json"
     ]
 }
