@@ -5,81 +5,81 @@ from youtube_search import YoutubeSearch
 import json
 from unidecode import unidecode
 from urllib.parse import quote_plus
-import argparse
-from pywebio import STATIC_PATH
 from flask import Flask
-from pywebio import start_server
+from pywebio.platform.flask import webio_view
 
 app = Flask(__name__)
-# Fonction qui utilise la librairie YoutubeSearch pour récupérer les données concernant une recherche Youtube
-def function_youtube_search_no_filter(champ_de_recherche):
-    text_without_accents = unidecode(champ_de_recherche)
-    text_with_plus = quote_plus(text_without_accents)
-    results = YoutubeSearch(text_with_plus, max_results=50).to_dict()
-    json_data = json.dumps(results, ensure_ascii=False)
-    filename = 'datas.json'
-    function_save_data_as_json(json_data,filename)
-    function_format_data_as_json()
-
-#Fonction qui applique un filtre sur le nombre de vues des vidéos Youtube
-def function_youtube_search_filter_on_views(min_number,max_number):
-    with open('datas.json') as f:
-        data = json.load(f)
-    # Filtrer les éléments entre la valeur minimale et la valeur maximale
-    resultats_filtres = [element for element in data if min_number <= element['views'] <= max_number]
-    json_data = json.dumps(resultats_filtres, ensure_ascii=False)
-    filename = 'datas_filter_view.json'
-    function_save_data_as_json(json_data,filename)
-
-#Fonction qui applique un filtre sur la date de publication des vidéos YouTube
-def function_youtube_search_filter_on_publication_date(date_de_publication):
-    with open('datas.json') as f:
-        data = json.load(f)
-    # Filtrer les éléments contenant le terme de recherche
-    resultats_filtres = [element for element in data if date_de_publication in element['publish_time']]
-    json_data = json.dumps(resultats_filtres, ensure_ascii=False)
-    filename = 'datas_filter_publication_date.json'
-    function_save_data_as_json(json_data,filename)
-
-#Fonction qui applique plusieurs filtres sur les vidéos YouTube
-def function_youtube_search_all_filter(date_de_publication,min_number,max_number):
-    with open('datas.json') as f:
-        data = json.load(f)
-    # Filtrer les éléments en fonction des critères de recherche
-    resultats_filtres = [
-        element
-        for element in data
-        if date_de_publication in element['publish_time']
-        and min_number <= element['views'] <= max_number
-        ]
-    json_data = json.dumps(resultats_filtres, ensure_ascii=False)
-    filename = 'datas_filter.json'
-    function_save_data_as_json(json_data,filename)
-
-# Formate les valeurs views du fichier json pour appliquer des filtres dessus
-def function_format_data_as_json():
-    with open('datas.json',encoding='utf-8') as f:
-        data = json.load(f)
-    for element in data:
-        views = element['views']
-        views = int(''.join(filter(str.isdigit, views)))  
-        element['views'] = views
-    with open('datas.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
-
-# Sauvegarder les données au format JSON
-def function_save_data_as_json(json_data,filename):
-    with open(filename, 'w', encoding='utf-8') as f:
-        f.write(json_data)
-
-#Function qui permet de télécharger les données au format JSON dans le navigateur
-def function_download_json(json_file_name,json_save_name,file_link_name):
-    with open(json_file_name, encoding='utf-8') as f:
-            data = json.load(f)
-    json_content = json.dumps(data, indent=4, ensure_ascii=False).encode('utf-8')
-    put_file(json_save_name, json_content,file_link_name)
+app.secret_key = "secretkeybaguette78"
 
 def main():
+    # Fonction qui utilise la librairie YoutubeSearch pour récupérer les données concernant une recherche Youtube
+    def function_youtube_search_no_filter(champ_de_recherche):
+        text_without_accents = unidecode(champ_de_recherche)
+        text_with_plus = quote_plus(text_without_accents)
+        results = YoutubeSearch(text_with_plus, max_results=50).to_dict()
+        json_data = json.dumps(results, ensure_ascii=False)
+        filename = 'datas.json'
+        function_save_data_as_json(json_data,filename)
+        function_format_data_as_json()
+
+    #Fonction qui applique un filtre sur le nombre de vues des vidéos Youtube
+    def function_youtube_search_filter_on_views(min_number,max_number):
+        with open('datas.json') as f:
+            data = json.load(f)
+        # Filtrer les éléments entre la valeur minimale et la valeur maximale
+        resultats_filtres = [element for element in data if min_number <= element['views'] <= max_number]
+        json_data = json.dumps(resultats_filtres, ensure_ascii=False)
+        filename = 'datas_filter_view.json'
+        function_save_data_as_json(json_data,filename)
+
+    #Fonction qui applique un filtre sur la date de publication des vidéos YouTube
+    def function_youtube_search_filter_on_publication_date(date_de_publication):
+        with open('datas.json') as f:
+            data = json.load(f)
+        # Filtrer les éléments contenant le terme de recherche
+        resultats_filtres = [element for element in data if date_de_publication in element['publish_time']]
+        json_data = json.dumps(resultats_filtres, ensure_ascii=False)
+        filename = 'datas_filter_publication_date.json'
+        function_save_data_as_json(json_data,filename)
+
+    #Fonction qui applique plusieurs filtres sur les vidéos YouTube
+    def function_youtube_search_all_filter(date_de_publication,min_number,max_number):
+        with open('datas.json') as f:
+            data = json.load(f)
+        # Filtrer les éléments en fonction des critères de recherche
+        resultats_filtres = [
+            element
+            for element in data
+            if date_de_publication in element['publish_time']
+            and min_number <= element['views'] <= max_number
+            ]
+        json_data = json.dumps(resultats_filtres, ensure_ascii=False)
+        filename = 'datas_filter.json'
+        function_save_data_as_json(json_data,filename)
+
+    # Formate les valeurs views du fichier json pour appliquer des filtres dessus
+    def function_format_data_as_json():
+        with open('datas.json',encoding='utf-8') as f:
+            data = json.load(f)
+        for element in data:
+            views = element['views']
+            views = int(''.join(filter(str.isdigit, views)))  
+            element['views'] = views
+        with open('datas.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+
+    # Sauvegarder les données au format JSON
+    def function_save_data_as_json(json_data,filename):
+        with open(filename, 'w', encoding='utf-8') as f:
+            f.write(json_data)
+
+    #Function qui permet de télécharger les données au format JSON dans le navigateur
+    def function_download_json(json_file_name,json_save_name,file_link_name):
+        with open(json_file_name, encoding='utf-8') as f:
+                data = json.load(f)
+        json_content = json.dumps(data, indent=4, ensure_ascii=False).encode('utf-8')
+        put_file(json_save_name, json_content,file_link_name)
+
     put_markdown("## Programme YoutubeSearch")
 
     put_text('Le Programme YoutubeSearch permet de récupérer des données concernant des vidéos en lien avec une recherche Youtube. Dans un premier temps il faut renseigner le champ de recherche Youtube sur lequel vous voulez effectuer une étude. Il est ensuite possible de filtrer les données selon plusieurs critères')
@@ -168,9 +168,8 @@ def main():
         put_text("5. Il est possible de relancer le programme YoutubeSearch pour obtenir de nouveaux résultats en actualisant la page internet.En cliquant sur le lien juste en dessous la page va s'actualiser automatiquement ")
         put_html("<a href='javascript:location.reload(true)'>Relancer le programme YoutubeSearch</a>")
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--port",type=int, default=8080)
-    args = parser.parse_args()
+# add a flask url_rule for routing
+app.add_url_rule('/', 'webio_view', webio_view(main),methods=['GET','POST']) 
 
-    start_server(main,port=args.port)
+if __name__ =="__main__":
+    app.run(debug=False)
