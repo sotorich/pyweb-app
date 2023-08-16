@@ -2,3 +2,4 @@ pywebio
 youtube_search
 unidecode
 flask
+boto3
