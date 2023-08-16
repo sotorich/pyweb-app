@@ -23,7 +23,7 @@
         "long_desc": null,
         "channel": "Nicorama",
         "duration": "15:04",
-        "views": 35351,
+        "views": 35364,
         "publish_time": "il y a 2 mois",
         "url_suffix": "/watch?v=u8BuF1qpmnI&pp=ygUOdHV0b3JpZWwrdmlkZW8%3D"
     },
@@ -163,7 +163,7 @@
         "long_desc": null,
         "channel": "Stratégie Vidéo",
         "duration": "39:30",
-        "views": 430169,
+        "views": 430170,
         "publish_time": "il y a 2 ans",
         "url_suffix": "/watch?v=9o1uBsmBTr4&pp=ygUOdHV0b3JpZWwrdmlkZW8%3D"
     },
@@ -191,7 +191,7 @@
         "long_desc": null,
         "channel": "Philéas / in my timeline",
         "duration": "23:56",
-        "views": 2723187,
+        "views": 2723190,
         "publish_time": "il y a 6 ans",
         "url_suffix": "/watch?v=cu1Bugc0B60&pp=ygUOdHV0b3JpZWwrdmlkZW8%3D"
     },
@@ -224,6 +224,20 @@
         "url_suffix": "/watch?v=YwQ39zoWh0A&pp=ygUOdHV0b3JpZWwrdmlkZW8%3D"
     },
     {
+        "id": "-2b79B6iaj8",
+        "thumbnails": [
+            "https://i.ytimg.com/vi/-2b79B6iaj8/hq720_2.jpg?sqp=-oaymwE9COgCEMoBSFryq4qpAy8IARUAAAAAGAAlAADIQj0AgKJDeAHwAQH4AZQDgALQBYoCDAgAEAEYSyBbKGUwDw==&rs=AOn4CLDckW5E5NC7CgW5ebc4CcCJd0dazA",
+            "https://i.ytimg.com/vi/-2b79B6iaj8/hq720_2.jpg?sqp=-oaymwExCNAFEJQDSFryq4qpAyMIARUAAIhCGADwAQH4AZQDgALQBYoCDAgAEAEYSyBbKGUwDw==&rs=AOn4CLAZwulyB7jLfAmRWzoJ1_Ex61MJfA"
+        ],
+        "title": "Tutorial video",
+        "long_desc": null,
+        "channel": "SOFIA SOFIA",
+        "duration": "0:16",
+        "views": 15785279,
+        "publish_time": "il y a 2 ans",
+        "url_suffix": "/shorts/-2b79B6iaj8"
+    },
+    {
         "id": "e4oKO_PzQEY",
         "thumbnails": [
             "https://i.ytimg.com/vi/e4oKO_PzQEY/hq720.jpg?sqp=-oaymwEjCOgCEMoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLD0tiUOtrm2PfOOidP6Pu4-GGUZhg",
@@ -247,22 +261,8 @@
         "long_desc": null,
         "channel": "PhareAway",
         "duration": "30:36",
-        "views": 106254,
+        "views": 106256,
         "publish_time": "il y a 2 ans",
         "url_suffix": "/watch?v=rQdzw5WOfMY&pp=ygUOdHV0b3JpZWwrdmlkZW8%3D"
-    },
-    {
-        "id": "KCJ_RC8xim4",
-        "thumbnails": [
-            "https://i.ytimg.com/vi/KCJ_RC8xim4/hq720.jpg?sqp=-oaymwEjCOgCEMoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLChbBJWYtagl62jXAguAe2i09f-xA",
-            "https://i.ytimg.com/vi/KCJ_RC8xim4/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLBMC6qOIHGa7voaknMrohHNsU1LOg"
-        ],
-        "title": "Comment faire un montage vidéo sur CapCut : guide complet",
-        "long_desc": null,
-        "channel": "Stratégie Vidéo",
-        "duration": "45:41",
-        "views": 210135,
-        "publish_time": "il y a 1 an",
-        "url_suffix": "/watch?v=KCJ_RC8xim4&pp=ygUOdHV0b3JpZWwrdmlkZW8%3D"
     }
 ]
