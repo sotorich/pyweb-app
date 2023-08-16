@@ -5,7 +5,12 @@ from youtube_search import YoutubeSearch
 import json
 from unidecode import unidecode
 from urllib.parse import quote_plus
+import argparse
+from pywebio import STATIC_PATH
+from flask import Flask
+from pywebio import start_server
 
+app = Flask(__name__)
 # Fonction qui utilise la librairie YoutubeSearch pour récupérer les données concernant une recherche Youtube
 def function_youtube_search_no_filter(champ_de_recherche):
     text_without_accents = unidecode(champ_de_recherche)
@@ -164,9 +169,8 @@ def main():
         put_html("<a href='javascript:location.reload(true)'>Relancer le programme YoutubeSearch</a>")
 
 if __name__ == '__main__':
-    from pywebio.platform.flask import webio_view
-    from flask import Flask
-    app = Flask(__name__)
-    app.add_url_rule('/', 'webio_view', webio_view(main), methods=['GET', 'POST'])
-    app.run()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-p", "--port",type=int, default=8080)
+    args = parser.parse_args()
 
+    start_server(main,port=args.port)
