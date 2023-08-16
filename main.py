@@ -164,5 +164,9 @@ def main():
         put_html("<a href='javascript:location.reload(true)'>Relancer le programme YoutubeSearch</a>")
 
 if __name__ == '__main__':
-    start_server(main, port=8080)
+    from pywebio.platform.flask import webio_view
+    from flask import Flask
+    app = Flask(__name__)
+    app.add_url_rule('/', 'webio_view', webio_view(main), methods=['GET', 'POST'])
+    app.run()
 
