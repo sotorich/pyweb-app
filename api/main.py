@@ -106,7 +106,7 @@ def main():
 
     def upload_file_to_s3(bucket_name, local_filename, s3_key):
         s3 = boto3.client('s3')
-        s3.upload_file(bucket_name,local_filename,s3_key)
+        s3.upload_file(local_filename,bucket_name,s3_key)
     
     def rewrite_json_to_s3(bucket_name, s3_key, new_json_data):
         s3 = boto3.client('s3')
