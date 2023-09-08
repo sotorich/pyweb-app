@@ -34,7 +34,7 @@ def main():
 
     #Fonction qui applique un filtre sur la date de publication des vidéos YouTube
     def function_youtube_search_filter_on_publication_date(date_de_publication):
-        with open('datas.json') as f:
+        with open('datas.json',encoding="utf8") as f:
             data = json.load(f)
         # Filtrer les éléments contenant le terme de recherche
         resultats_filtres = [element for element in data if date_de_publication in element['publish_time']]
@@ -44,7 +44,7 @@ def main():
 
     #Fonction qui applique plusieurs filtres sur les vidéos YouTube
     def function_youtube_search_all_filter(date_de_publication,min_number,max_number):
-        with open('datas.json') as f:
+        with open('datas.json',encoding="utf8") as f:
             data = json.load(f)
         # Filtrer les éléments en fonction des critères de recherche
         resultats_filtres = [
@@ -101,7 +101,7 @@ def main():
         put_html("<hr style='border-top: 3px solid #bbb'></hr>")
     elif filter_option == 'Filtrer sur la date de publication et le nombre de vues':
         put_text('2. Filtre sur la date de publication et le nombre de vues, renseigner une date de publication, une valeur minimale et une valeur maximale')
-        date_de_publication = input("Choissisez la date de publication sur laquelle vous voulez appliquer le filtre", type=TEXT,required=True,datalist=['2 ans','3 ans'])
+        date_de_publication = input("Choissisez la date de publication sur laquelle vous voulez appliquer le filtre", type=TEXT,required=True,datalist=['1 mois','2 mois','3 mois','1 an','2 ans','3 ans','4 ans','5 ans','6 ans','7 ans','8 ans','9 ans'])
         min_number = input("Choisissez la valeur minimale du nombre de vues sur lequel vous voulez appliquer le filtre", type=NUMBER, value=1000)
         max_number = input("Choisissez la valeur maximale du nombre de vues sur lequel vous voulez appliquer le filtre", type=NUMBER,value=50000)
         put_html("<hr style='border-top: 3px solid #bbb'></hr>")
