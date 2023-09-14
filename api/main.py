@@ -7,7 +7,8 @@ from unidecode import unidecode
 from urllib.parse import quote_plus
 from flask import Flask
 from pywebio.platform.flask import webio_view
-
+from youtubesearchpython import VideosSearch
+import re
 app = Flask(__name__)
 app.secret_key = "secretkeybaguette78"
 
@@ -16,19 +17,45 @@ def main():
     def function_youtube_search_no_filter(champ_de_recherche):
         text_without_accents = unidecode(champ_de_recherche)
         text_with_plus = quote_plus(text_without_accents)
-        results = YoutubeSearch(text_with_plus, max_results=50).to_dict()
-        json_data = json.dumps(results, ensure_ascii=False)
+        search = VideosSearch(text_with_plus)
+        results = YoutubeSearch(text_with_plus, max_results=30).to_dict()
+
+        # Créez une liste pour stocker les résultats individuels
+        all_results = {}
+
+        for i in range(11):
+            all_results[i] = search.result()['result']
+            search.next()
+        
+        json_data = json.dumps(all_results, ensure_ascii=False)
         filename = 'datas.json'
         function_save_data_as_json(json_data,filename)
         function_format_data_as_json()
 
     #Fonction qui applique un filtre sur le nombre de vues des vidéos Youtube
     def function_youtube_search_filter_on_views(min_number,max_number):
-        with open('datas.json') as f:
+        with open('datas.json',encoding="utf8") as f:
             data = json.load(f)
-        # Filtrer les éléments entre la valeur minimale et la valeur maximale
-        resultats_filtres = [element for element in data if min_number <= element['views'] <= max_number]
-        json_data = json.dumps(resultats_filtres, ensure_ascii=False)
+        filtered_results = {}
+        # Parcourir les clés de 0 à 10
+        for i in range(11):
+            key = str(i)
+            # Vérifier si la clé existe dans le dictionnaire
+            if key in data:
+                # Récupérer la liste d'objets JSON correspondant à cette clé
+                object_list = data[key]
+            
+                # Filtrer les objets qui correspondent aux critères
+                filtered_objects = [
+                    obj
+                    for obj in object_list
+                    if min_number <= obj['viewCount']['text'] <= max_number
+                ]
+            
+                # Ajouter les objets filtrés au dictionnaire résultat
+                if filtered_objects:
+                    filtered_results[key] = filtered_objects
+        json_data = json.dumps(filtered_results, ensure_ascii=False)
         filename = 'datas_filter_view.json'
         function_save_data_as_json(json_data,filename)
 
@@ -36,9 +63,27 @@ def main():
     def function_youtube_search_filter_on_publication_date(date_de_publication):
         with open('datas.json',encoding="utf8") as f:
             data = json.load(f)
-        # Filtrer les éléments contenant le terme de recherche
-        resultats_filtres = [element for element in data if date_de_publication in element['publish_time']]
-        json_data = json.dumps(resultats_filtres, ensure_ascii=False)
+        filtered_results = {}
+        # Parcourir les clés de 0 à 10
+        for i in range(11):
+            key = str(i)
+            # Vérifier si la clé existe dans le dictionnaire
+            if key in data:
+                # Récupérer la liste d'objets JSON correspondant à cette clé
+                object_list = data[key]
+            
+                # Filtrer les objets qui correspondent aux critères
+                filtered_objects = [
+                    obj
+                    for obj in object_list
+                    if date_de_publication in obj['publishedTime']
+                ]
+            
+                # Ajouter les objets filtrés au dictionnaire résultat
+                if filtered_objects:
+                    filtered_results[key] = filtered_objects
+
+        json_data = json.dumps(filtered_results, ensure_ascii=False)
         filename = 'datas_filter_publication_date.json'
         function_save_data_as_json(json_data,filename)
 
@@ -46,14 +91,29 @@ def main():
     def function_youtube_search_all_filter(date_de_publication,min_number,max_number):
         with open('datas.json',encoding="utf8") as f:
             data = json.load(f)
-        # Filtrer les éléments en fonction des critères de recherche
-        resultats_filtres = [
-            element
-            for element in data
-            if date_de_publication in element['publish_time']
-            and min_number <= element['views'] <= max_number
-            ]
-        json_data = json.dumps(resultats_filtres, ensure_ascii=False)
+        
+        filtered_results = {}
+        # Parcourir les clés de 0 à 10
+        for i in range(11):
+            key = str(i)
+            # Vérifier si la clé existe dans le dictionnaire
+            if key in data:
+                # Récupérer la liste d'objets JSON correspondant à cette clé
+                object_list = data[key]
+            
+                # Filtrer les objets qui correspondent aux critères
+                filtered_objects = [
+                    obj
+                    for obj in object_list
+                    if date_de_publication in obj['publishedTime']
+                    and min_number <= obj['viewCount']['text'] <= max_number
+                ]
+            
+                # Ajouter les objets filtrés au dictionnaire résultat
+                if filtered_objects:
+                    filtered_results[key] = filtered_objects
+
+        json_data = json.dumps(filtered_results, ensure_ascii=False)
         filename = 'datas_filter.json'
         function_save_data_as_json(json_data,filename)
 
@@ -61,10 +121,20 @@ def main():
     def function_format_data_as_json():
         with open('datas.json',encoding='utf-8') as f:
             data = json.load(f)
-        for element in data:
-            views = element['views']
-            views = int(''.join(filter(str.isdigit, views)))  
-            element['views'] = views
+        # Parcourir les clés de 0 à 10
+        for i in range(11):
+            key = str(i)
+            if key in data:
+            # Accédez à la liste correspondant à cette clé
+                object_list = data[key]
+                for obj in object_list:
+                    view_count_text = obj['viewCount']['text']
+                    view_count = int(re.sub(r'[^\d]+', '', view_count_text))
+                    obj['viewCount']['text'] = view_count
+        # for element in data:
+        #     views = element['viewCount']['text']
+        #     views = int(''.join(filter(str.isdigit, views)))  
+        #     element['viewCount']['text'] = views
         with open('datas.json', 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
 
@@ -97,11 +167,11 @@ def main():
         put_html("<hr style='border-top: 3px solid #bbb'></hr>")
     elif filter_option == 'Filtrer sur la date de publication':
         put_text('2. Filtre sur la date de publication, renseigner la date de publication pour la recherche')
-        date_de_publication = input("Choissisez la date de publication sur laquelle vous voulez appliquer le filtre", type=TEXT,required=True,datalist=['1 mois','2 mois','3 mois','1 an','2 ans','3 ans','4 ans','5 ans','6 ans','7 ans','8 ans','9 ans'])
+        date_de_publication = input("Choissisez la date de publication sur laquelle vous voulez appliquer le filtre", type=TEXT,required=True,datalist=['1 months','2 months','3 months','1 years','2 years','3 years','4 years','5 years','6 years','7 years','8 years','9 years'])
         put_html("<hr style='border-top: 3px solid #bbb'></hr>")
     elif filter_option == 'Filtrer sur la date de publication et le nombre de vues':
         put_text('2. Filtre sur la date de publication et le nombre de vues, renseigner une date de publication, une valeur minimale et une valeur maximale')
-        date_de_publication = input("Choissisez la date de publication sur laquelle vous voulez appliquer le filtre", type=TEXT,required=True,datalist=['1 mois','2 mois','3 mois','1 an','2 ans','3 ans','4 ans','5 ans','6 ans','7 ans','8 ans','9 ans'])
+        date_de_publication = input("Choissisez la date de publication sur laquelle vous voulez appliquer le filtre", type=TEXT,required=True,datalist=['1 months','2 months','3 months','1 years','2 years','3 years','4 years','5 years','6 years','7 years','8 years','9 years'])
         min_number = input("Choisissez la valeur minimale du nombre de vues sur lequel vous voulez appliquer le filtre", type=NUMBER, value=1000)
         max_number = input("Choisissez la valeur maximale du nombre de vues sur lequel vous voulez appliquer le filtre", type=NUMBER,value=50000)
         put_html("<hr style='border-top: 3px solid #bbb'></hr>")
