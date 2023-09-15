@@ -9,6 +9,7 @@ from flask import Flask
 from pywebio.platform.flask import webio_view
 from youtubesearchpython import VideosSearch
 import re
+from openpyxl import Workbook
 app = Flask(__name__)
 app.secret_key = "secretkeybaguette78"
 
@@ -31,6 +32,47 @@ def main():
         filename = 'datas.json'
         function_save_data_as_json(json_data,filename)
         function_format_data_as_json()
+    
+    def function_convert_json_to_excel(data_filename,excel_filename_output):
+        with open(data_filename,encoding="utf8") as f:
+            data = json.load(f)
+        
+        flattened_data = []
+        for key, items in data.items():
+            for item in items:
+                if item['descriptionSnippet'] is not None:
+                    description_text = ' '.join([snippet['text'] for snippet in item['descriptionSnippet']])
+
+                flat_item = {
+                    'type': item['type'],
+                    'id': item['id'],
+                    'title': item['title'],
+                    'publishedTime': item['publishedTime'],
+                    'duration': item['duration'],
+                    'viewCount_text': item['viewCount']['text'],
+                    'viewCount_short': item['viewCount']['short'],
+                    'descriptionSnippet': description_text,
+                    'channel_name': item['channel']['name'],
+                    'accessibility': item['accessibility']['title'],
+                    'accessibility_duration': item['accessibility']['duration'],
+                    'link': item['link']
+                }
+                flattened_data.append(flat_item)
+        
+        wb = Workbook()
+        ws = wb.active
+
+        # Write headers to the worksheet
+        headers = list(flattened_data[0].keys())
+        ws.append(headers)
+
+        # Write data rows to the worksheet
+        for item in flattened_data:
+            ws.append(list(item.values()))
+
+        # Save the workbook as an Excel file
+        excel_filename = excel_filename_output
+        wb.save(excel_filename)
 
     #Fonction qui applique un filtre sur le nombre de vues des vidéos Youtube
     def function_youtube_search_filter_on_views(min_number,max_number):
@@ -131,10 +173,7 @@ def main():
                     view_count_text = obj['viewCount']['text']
                     view_count = int(re.sub(r'[^\d]+', '', view_count_text))
                     obj['viewCount']['text'] = view_count
-        # for element in data:
-        #     views = element['viewCount']['text']
-        #     views = int(''.join(filter(str.isdigit, views)))  
-        #     element['viewCount']['text'] = views
+
         with open('datas.json', 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
 
@@ -156,6 +195,9 @@ def main():
     put_html("<hr style='border-top: 3px solid #bbb'></hr>")
     champ_de_recherche = input("Entrez une valeur qui correspond au champ de recherche Youtube", type=TEXT,required=True)
     function_youtube_search_no_filter(champ_de_recherche)
+    data_filename = 'datas.json'
+    excel_filename_output = 'datas.xlsx'
+    function_convert_json_to_excel(data_filename,excel_filename_output)
     put_text("1. Plusieurs filtres sont mis à votre disposition, il est également possible d'appliquer aucun filtre sur les résultats de la recherche")
     put_html("<hr style='border-top: 3px solid #bbb'></hr>")
     filter_option = radio("Choisissez une option de filtre :", options=['Appliquer aucun filtre', 'Filtrer sur le nombre de vues', 'Filtrer sur la date de publication','Filtrer sur la date de publication et le nombre de vues'])
@@ -188,6 +230,9 @@ def main():
         put_html("<a href='javascript:location.reload(true)'>Relancer le programme YoutubeSearch</a>")
     elif filter_option == 'Filtrer sur le nombre de vues':
         function_youtube_search_filter_on_views(min_number,max_number)
+        data_filename = 'datas_filter_view.json'
+        excel_filename_output = 'datas_filter_view.xlsx'
+        function_convert_json_to_excel(data_filename,excel_filename_output)
         put_text("3. Les données ont été récupérées avec succès vous pouvez les télécharger grâce au lien ci-dessous. Le téléchargement apparaitra dans votre barre de navigation onglet Téléchargements sous le nom 'resultats_filter.json'")
         json_file_name = "datas_filter_view.json"
         json_save_name = "resultats_filter.json"
@@ -205,6 +250,9 @@ def main():
         put_html("<a href='javascript:location.reload(true)'>Relancer le programme YoutubeSearch</a>")
     elif filter_option == 'Filtrer sur la date de publication':
         function_youtube_search_filter_on_publication_date(date_de_publication)
+        data_filename = 'datas_filter_publication_date.json'
+        excel_filename_output = 'datas_filter_publication_date.xlsx'
+        function_convert_json_to_excel(data_filename,excel_filename_output)
         put_text("3. Les données ont été récupérées avec succès vous pouvez les télécharger grâce au lien ci-dessous. Le téléchargement apparaitra dans votre barre de navigation onglet Téléchargements sous le nom 'resultats_filter.json'")
         json_file_name = "datas_filter_publication_date.json"
         json_save_name = "resultats_filter.json"
@@ -222,6 +270,9 @@ def main():
         put_html("<a href='javascript:location.reload(true)'>Relancer le programme YoutubeSearch</a>")
     elif filter_option == 'Filtrer sur la date de publication et le nombre de vues':
         function_youtube_search_all_filter(date_de_publication,min_number,max_number)
+        data_filename = 'datas_filter.json'
+        excel_filename_output = 'datas_filter.xlsx'
+        function_convert_json_to_excel(data_filename,excel_filename_output)
         put_text("3. Les données ont été récupérées avec succès vous pouvez les télécharger grâce au lien ci-dessous. Le téléchargement apparaitra dans votre barre de navigation onglet Téléchargements sous le nom 'resultats_filter.json'")
         json_file_name = "datas_filter.json"
         json_save_name = "resultats_filter.json"
